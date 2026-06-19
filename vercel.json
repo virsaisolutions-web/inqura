@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/vault/sync",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/metrics/refresh",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}
