@@ -106,28 +106,21 @@ SLACK_WEBHOOK_URL=                  # https://hooks.slack.com/services/...
 
 ---
 
-## Database migrations
+## Database setup
 
-Run each file in order using Supabase SQL Editor (Dashboard → SQL Editor → New query).
-Files are in `supabase/migrations/_archive/`.
+Run these four files in order using Supabase SQL Editor (Dashboard → SQL Editor → New query).
+Files are in `supabase/run/`.
 
-| File | Creates |
-|---|---|
-| `001_tenants.sql` | `tenants` — one row per client |
-| `002_sync_log.sql` | `sync_log` — audit trail for every Vault sync |
-| `003_cases.sql` | `cases` — inquiry metadata (no PHI, no case text) |
-| `004_metrics_daily.sql` | `metrics_daily` — pre-aggregated nightly metrics |
-| `005_alerts.sql` | `alerts` — SLA breach risk notifications |
-| `006_audit_log.sql` | `audit_log` — 21 CFR Part 11-aware user action log |
-| `007_integrations.sql` | `integrations` — Slack / Teams webhook config |
-| `008_vault_credentials.sql` | Vault connection credentials per tenant |
-| `009_tenants_enhanced.sql` | Extends `tenants` (SLA config, display name) |
-| `010_tenant_users.sql` | `tenant_users` — user ↔ tenant membership + role |
-| `011_rls_tenant_isolation.sql` | Row Level Security policies |
-| `012_indexes_and_constraints.sql` | Performance indexes |
-| `013_phase1_seed_tenant_users.sql` | Seeds first tenant + maps admin user |
+| Order | File | What it does |
+|---|---|---|
+| 1 | `01_schema.sql` | Full schema — all tables, indexes, constraints (replaces the 13 archived dev migrations) |
+| 2 | `02_rls.sql` | Row Level Security policies — tenant isolation, auth guards |
+| 3 | `03_seed.sql` | Bootstrap seed — creates your first tenant row and maps your admin user |
+| 4 | `04_report_jobs.sql` | `report_jobs` table — tracks async PDF generation state |
 
-After running all migrations, copy the tenant UUID into `TENANT_ID` in `.env.local`.
+After running `03_seed.sql`, copy the tenant UUID from the `tenants` table into `TENANT_ID` in `.env.local`.
+
+> The `supabase/migrations/_archive/` directory contains the original incremental dev migrations for reference only. Do not run them on a fresh install.
 
 ---
 

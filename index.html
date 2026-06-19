@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inqura — Medical Affairs Intelligence for Veeva-Native Teams</title>
+  <meta name="description" content="Real-time inquiry intelligence, SLA monitoring, and compliance reporting built exclusively for Medical Affairs teams on Veeva." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root, [data-theme="light"] {
+      --bg: #f5f7fa; --surface: #ffffff; --surface-2: #f0f3f7;
+      --border: #e2e6ec; --border-2: #edf1f5;
+      --text-1: #0f1419; --text-2: #2c3440; --text-3: #4d5a6a; --text-4: #7a8696;
+      --accent: #4c6ef5; --accent-tint: #eef1fe; --accent-border: #c5d0fb;
+      --success-text: #166534; --success-bg: #f0fdf4; --success-border: #bbf7d0;
+      --danger-text: #991b1b; --danger-bg: #fef2f2; --danger-border: #fecaca;
+      --warning-text: #92400e; --warning-bg: #fffbeb; --warning-border: #fde68a;
+      /* Simulation — inverted vs page when light */
+      --sim-bg: #0a0c0f; --sim-surface: #101317; --sim-surface-2: #161b22;
+      --sim-border: #1c2128; --sim-text-1: #eef1f5; --sim-text-2: #c4ccd5; --sim-text-4: #5f6b78;
+      --sim-accent: #5b7cfa; --sim-danger: #ec8a8a; --sim-warning: #e0b46a; --sim-success: #7fcaa3;
+    }
+    [data-theme="dark"] {
+      --bg: #0a0c0f; --surface: #101317; --surface-2: #161b22;
+      --border: #1c2128; --border-2: #181c22;
+      --text-1: #eef1f5; --text-2: #c4ccd5; --text-3: #9aa4b1; --text-4: #5f6b78;
+      --accent: #5b7cfa; --accent-tint: #141a2a; --accent-border: #22304f;
+      --success-text: #7fcaa3; --success-bg: #11201a; --success-border: #1d362a;
+      --danger-text: #ec8a8a; --danger-bg: #211417; --danger-border: #3a2126;
+      --warning-text: #e0b46a; --warning-bg: #1f1a11; --warning-border: #352b18;
+      /* Simulation — light when page is dark */
+      --sim-bg: #f5f7fa; --sim-surface: #ffffff; --sim-surface-2: #f0f3f7;
+      --sim-border: #e2e6ec; --sim-text-1: #0f1419; --sim-text-2: #2c3440; --sim-text-4: #7a8696;
+      --sim-accent: #4c6ef5; --sim-danger: #991b1b; --sim-warning: #92400e; --sim-success: #166534;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Manrope', system-ui, sans-serif; background: var(--bg); color: var(--text-1); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; transition: background .25s, color .25s; }
+
+    /* Nav */
+    nav { position: sticky; top: 0; z-index: 100; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); transition: background .25s, border-color .25s; }
+    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-mark { width: 28px; height: 28px; background: var(--accent); border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+    .logo-mark span { color: #fff; font-size: 11px; font-weight: 700; letter-spacing: -0.03em; }
+    .logo-name { font-size: 17px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; }
+    .logo-by { font-size: 11px; color: var(--text-4); font-weight: 400; margin-left: 2px; }
+    .nav-links { display: flex; align-items: center; gap: 4px; }
+    .nav-link { font-size: 13px; color: var(--text-3); text-decoration: none; padding: 6px 11px; border-radius: 7px; font-weight: 500; transition: background .15s, color .15s; }
+    .nav-link:hover { background: var(--surface-2); color: var(--text-1); }
+    .theme-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 7px; background: none; border: 1px solid var(--border); cursor: pointer; color: var(--text-3); transition: all .15s; margin-right: 4px; }
+    .theme-btn:hover { background: var(--surface-2); color: var(--text-1); }
+    .theme-btn svg { width: 15px; height: 15px; }
+    .icon-sun { display: none; } .icon-moon { display: block; }
+    [data-theme="dark"] .icon-sun { display: block; } [data-theme="dark"] .icon-moon { display: none; }
+    .btn-login { font-size: 13px; font-weight: 600; color: var(--text-2); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 16px; text-decoration: none; transition: all .15s; }
+    .btn-login:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-demo-sm { font-size: 13px; font-weight: 600; color: #fff; background: var(--accent); border-radius: 8px; padding: 6px 16px; text-decoration: none; border: none; cursor: pointer; font-family: inherit; transition: opacity .15s; }
+    .btn-demo-sm:hover { opacity: .88; }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* Hero */
+    .hero { padding: 88px 0 72px; text-align: center; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: var(--accent-tint); border: 1px solid var(--accent-border); border-radius: 100px; padding: 5px 14px; margin-bottom: 28px; }
+    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .hero-h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.12; color: var(--text-1); max-width: 740px; margin: 0 auto 20px; }
+    .hero-h1 em { color: var(--accent); font-style: normal; }
+    .hero-sub { font-size: 18px; color: var(--text-3); max-width: 560px; margin: 0 auto 36px; line-height: 1.65; font-weight: 400; }
+    .hero-actions { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: #fff; background: var(--accent); border-radius: 10px; padding: 13px 28px; text-decoration: none; border: none; cursor: pointer; font-family: inherit; box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 35%, transparent); transition: opacity .15s, transform .15s; }
+    .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--text-2); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 13px 28px; text-decoration: none; transition: all .15s; }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-note { margin-top: 18px; font-size: 12px; color: var(--text-4); }
+
+    /* ── Simulation ── */
+    .sim-wrap { max-width: 1080px; margin: 56px auto 0; border-radius: 14px; overflow: hidden; box-shadow: 0 16px 64px rgba(0,0,0,.22); border: 1px solid var(--border); }
+    .sim-chrome { background: var(--sim-bg); border-bottom: 1px solid var(--sim-border); }
+    .sim-titlebar { padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+    .sim-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .sim-dot.r { background: #fc5c65; } .sim-dot.y { background: #fed330; } .sim-dot.g { background: #26de81; }
+    .sim-url { flex: 1; text-align: center; font-size: 11px; color: var(--sim-text-4); font-family: 'JetBrains Mono', monospace; }
+    .sim-progress { height: 2px; background: var(--sim-border); position: relative; overflow: hidden; }
+    .sim-progress-fill { height: 100%; background: var(--sim-accent); width: 0%; transition: width linear; }
+
+    .sim-body { background: var(--sim-bg); display: grid; grid-template-columns: 200px 1fr; height: 560px; }
+
+    /* Sidebar */
+    .sim-sidebar { background: var(--sim-surface); border-right: 1px solid var(--sim-border); display: flex; flex-direction: column; }
+    .sim-sidebar-top { padding: 14px 14px 12px; border-bottom: 1px solid var(--sim-border); display: flex; align-items: center; gap: 8px; }
+    .sim-logo-mark { width: 24px; height: 24px; background: var(--sim-accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sim-logo-mark span { color: #fff; font-size: 10px; font-weight: 700; letter-spacing: -0.02em; }
+    .sim-logo-text { font-size: 14px; font-weight: 700; color: var(--sim-text-1); letter-spacing: -0.02em; }
+    .sim-bell { margin-left: auto; position: relative; cursor: default; }
+    .sim-bell svg { width: 15px; height: 15px; stroke: var(--sim-text-4); fill: none; }
+    .sim-bell-badge { position: absolute; top: -4px; right: -5px; width: 14px; height: 14px; background: var(--sim-danger); border-radius: 50%; font-size: 8px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; }
+    .sim-nav { padding: 8px 0; flex: 1; overflow: hidden; }
+    .sim-nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 14px; margin: 1px 8px; border-radius: 6px; font-size: 12px; font-weight: 500; color: var(--sim-text-4); cursor: pointer; transition: background .15s, color .15s; user-select: none; }
+    .sim-nav-item:hover { background: var(--sim-surface-2); color: var(--sim-text-2); }
+    .sim-nav-item.active { background: var(--sim-surface-2); color: var(--sim-accent); border-left: 3px solid var(--sim-accent); padding-left: 11px; }
+    .sim-nav-item svg { width: 14px; height: 14px; flex-shrink: 0; stroke: currentColor; fill: none; }
+    .sim-nav-sep { height: 1px; background: var(--sim-border); margin: 6px 14px; }
+    .sim-user { padding: 12px 14px; border-top: 1px solid var(--sim-border); display: flex; align-items: center; gap: 8px; }
+    .sim-avatar { width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--sim-accent) 20%, transparent); font-size: 10px; font-weight: 700; color: var(--sim-accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sim-user-info { font-size: 10px; color: var(--sim-text-4); line-height: 1.3; }
+
+    /* Main area */
+    .sim-main { position: relative; overflow: hidden; background: var(--sim-bg); }
+    .sim-page { position: absolute; inset: 0; padding: 16px; opacity: 0; pointer-events: none; transition: opacity .35s ease; overflow-y: auto; scrollbar-width: none; }
+    .sim-page::-webkit-scrollbar { display: none; }
+    .sim-page.active { opacity: 1; pointer-events: all; }
+
+    /* Shared */
+    .sim-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .sim-page-title { font-size: 13px; font-weight: 600; color: var(--sim-text-1); }
+    .sim-topbar-right { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+    .sim-sync-badge { font-size: 10px; font-weight: 600; color: var(--sim-success); background: color-mix(in srgb, var(--sim-success) 10%, transparent); border: 1px solid color-mix(in srgb, var(--sim-success) 25%, transparent); border-radius: 100px; padding: 3px 10px; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .sim-sync-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--sim-success); animation: spulse 2s infinite; }
+    .sim-btn-sm { font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--sim-border); background: var(--sim-surface); color: var(--sim-text-2); cursor: default; white-space: nowrap; flex-shrink: 0; }
+    .sim-btn-accent { background: var(--sim-accent); border-color: var(--sim-accent); color: #fff; }
+    .sim-card { background: var(--sim-surface); border: 1px solid var(--sim-border); border-radius: 10px; padding: 12px; }
+    .sim-card-title { font-size: 10px; font-weight: 700; color: var(--sim-text-2); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .sim-badge { font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 4px; display: inline-flex; align-items: center; white-space: nowrap; }
+    .sim-badge.danger { background: color-mix(in srgb, var(--sim-danger) 12%, transparent); color: var(--sim-danger); border: 1px solid color-mix(in srgb, var(--sim-danger) 25%, transparent); }
+    .sim-badge.warning { background: color-mix(in srgb, var(--sim-warning) 12%, transparent); color: var(--sim-warning); border: 1px solid color-mix(in srgb, var(--sim-warning) 25%, transparent); }
+    .sim-badge.success { background: color-mix(in srgb, var(--sim-success) 12%, transparent); color: var(--sim-success); border: 1px solid color-mix(in srgb, var(--sim-success) 25%, transparent); }
+    .sim-badge.accent { background: color-mix(in srgb, var(--sim-accent) 12%, transparent); color: var(--sim-accent); border: 1px solid color-mix(in srgb, var(--sim-accent) 25%, transparent); }
+    .sim-badge.neutral { background: var(--sim-surface-2); color: var(--sim-text-4); border: 1px solid var(--sim-border); }
+    .sim-timer { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 10px; }
+    .sim-timer.danger { color: var(--sim-danger); animation: ttick 1.4s ease-in-out infinite; }
+    .sim-timer.warning { color: var(--sim-warning); }
+    .sim-timer.safe { color: var(--sim-success); }
+
+    /* ── Page 0: Overview ── */
+    .sim-kpi-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 10px; }
+    .sim-kpi { background: var(--sim-surface); border: 1px solid var(--sim-border); border-radius: 8px; padding: 10px 11px; }
+    .sim-kpi-lbl { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--sim-text-4); margin-bottom: 5px; }
+    .sim-kpi-inner { display: flex; align-items: center; gap: 5px; }
+    .sim-kpi-val { font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; color: var(--sim-text-1); line-height: 1; }
+    .sim-kpi-val.accent { color: var(--sim-accent); } .sim-kpi-val.danger { color: var(--sim-danger); }
+    .sim-kpi-val.success { color: var(--sim-success); } .sim-kpi-val.warning { color: var(--sim-warning); }
+    .sim-kpi-sub { font-size: 9px; color: var(--sim-text-4); margin-top: 3px; }
+    .sim-grid-53 { display: grid; grid-template-columns: 3fr 2fr; gap: 8px; margin-bottom: 8px; }
+    .sim-left-col { display: flex; flex-direction: column; gap: 8px; }
+    .sim-right-col { display: flex; flex-direction: column; gap: 8px; }
+    .sim-bars { display: flex; align-items: flex-end; gap: 4px; height: 68px; }
+    .sim-bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 3px; height: 100%; justify-content: flex-end; }
+    .sim-bar { width: 100%; border-radius: 3px 3px 0 0; background: var(--sim-border); transform-origin: bottom; transform: scaleY(0); transition: transform .8s cubic-bezier(.22,1,.36,1); }
+    .sim-bar.accent { background: var(--sim-accent); }
+    .sim-page.active .sim-bar { transform: scaleY(1); }
+    .sim-bar-col:nth-child(1)  .sim-bar { transition-delay: .04s; } .sim-bar-col:nth-child(2)  .sim-bar { transition-delay: .09s; }
+    .sim-bar-col:nth-child(3)  .sim-bar { transition-delay: .14s; } .sim-bar-col:nth-child(4)  .sim-bar { transition-delay: .19s; }
+    .sim-bar-col:nth-child(5)  .sim-bar { transition-delay: .24s; } .sim-bar-col:nth-child(6)  .sim-bar { transition-delay: .29s; }
+    .sim-bar-col:nth-child(7)  .sim-bar { transition-delay: .34s; } .sim-bar-col:nth-child(8)  .sim-bar { transition-delay: .39s; }
+    .sim-bar-col:nth-child(9)  .sim-bar { transition-delay: .44s; } .sim-bar-col:nth-child(10) .sim-bar { transition-delay: .49s; }
+    .sim-bar-col:nth-child(11) .sim-bar { transition-delay: .54s; } .sim-bar-col:nth-child(12) .sim-bar { transition-delay: .59s; }
+    .sim-bar-lbl { font-size: 8px; color: var(--sim-text-4); font-family: 'JetBrains Mono', monospace; }
+    .sim-topic-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .sim-topic-lbl { font-size: 10px; color: var(--sim-text-3); width: 118px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sim-topic-track { flex: 1; height: 4px; border-radius: 2px; background: var(--sim-border); overflow: hidden; }
+    .sim-topic-fill { height: 100%; border-radius: 2px; background: var(--sim-accent); }
+    .sim-topic-num { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--sim-text-4); width: 28px; text-align: right; flex-shrink: 0; }
+    .sim-ch-row { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+    .sim-ch-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .sim-ch-lbl { flex: 1; font-size: 10px; color: var(--sim-text-2); }
+    .sim-ch-pct { font-size: 9px; color: var(--sim-text-4); }
+    .sim-ch-num { font-size: 10px; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--sim-text-1); width: 28px; text-align: right; }
+    .sim-prod-r { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+    .sim-prod-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .sim-prod-lbl { flex: 1; font-size: 10px; color: var(--sim-text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sim-prod-pct { font-size: 9px; color: var(--sim-text-4); }
+    .sim-prod-num { font-size: 10px; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--sim-text-1); width: 28px; text-align: right; }
+    /* Cases table */
+    .sim-table { width: 100%; border-collapse: collapse; }
+    .sim-table th { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--sim-text-4); padding: 6px 8px; border-bottom: 1px solid var(--sim-border); text-align: left; white-space: nowrap; }
+    .sim-table td { font-size: 10px; padding: 6px 8px; border-bottom: 1px solid color-mix(in srgb, var(--sim-border) 50%, transparent); color: var(--sim-text-2); vertical-align: middle; white-space: nowrap; }
+    .sim-table tr:last-child td { border-bottom: none; }
+    .sim-table tr { opacity: 0; transform: translateY(4px); transition: opacity .3s ease, transform .3s ease; }
+    .sim-page.active .sim-table tr:nth-child(1) { opacity: 1; transform: none; transition-delay: .06s; }
+    .sim-page.active .sim-table tr:nth-child(2) { opacity: 1; transform: none; transition-delay: .12s; }
+    .sim-page.active .sim-table tr:nth-child(3) { opacity: 1; transform: none; transition-delay: .18s; }
+    .sim-page.active .sim-table tr:nth-child(4) { opacity: 1; transform: none; transition-delay: .24s; }
+    .sim-page.active .sim-table tr:nth-child(5) { opacity: 1; transform: none; transition-delay: .30s; }
+    .sim-page.active .sim-table tr:nth-child(6) { opacity: 1; transform: none; transition-delay: .36s; }
+    .sim-table .mono { font-family: 'JetBrains Mono', monospace; }
+    .sim-table tr.hl td { background: color-mix(in srgb, var(--sim-accent) 5%, transparent); }
+
+    /* ── Page 1: SLA Monitor ── */
+    .sim-kpi-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+    .sim-sla-kpi { background: var(--sim-surface); border: 1px solid var(--sim-border); border-radius: 8px; padding: 12px 14px; }
+    .sim-sla-kpi-lbl { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--sim-text-4); margin-bottom: 5px; }
+    .sim-sla-kpi-val { font-size: 22px; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; line-height: 1; }
+    .sim-sla-kpi-sub { font-size: 9px; color: var(--sim-text-4); margin-top: 4px; }
+    .sim-period-seg { display: flex; border-radius: 7px; overflow: hidden; border: 1px solid var(--sim-border); }
+    .sim-period-opt { font-size: 10px; font-weight: 600; padding: 4px 10px; cursor: default; color: var(--sim-text-3); background: transparent; }
+    .sim-period-opt.active { background: var(--sim-accent); color: #fff; }
+    .sim-prod-table { width: 100%; border-collapse: collapse; }
+    .sim-prod-table th { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--sim-text-4); padding: 5px 7px; border-bottom: 1px solid var(--sim-border); text-align: left; }
+    .sim-prod-table td { font-size: 10px; padding: 7px 7px; border-bottom: 1px solid color-mix(in srgb, var(--sim-border) 50%, transparent); color: var(--sim-text-2); vertical-align: middle; }
+    .sim-prod-table tr:last-child td { border-bottom: none; }
+    .sim-pct-cell { display: flex; align-items: center; gap: 5px; }
+    .sim-pct-bar { width: 44px; height: 3px; border-radius: 2px; background: var(--sim-border); overflow: hidden; flex-shrink: 0; }
+    .sim-pct-fill2 { height: 100%; border-radius: 2px; width: 0; transition: width 1.1s ease .5s; }
+    .sim-pct-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 10px; }
+    .sim-trend-svg { width: 100%; height: 90px; }
+    .sim-risk-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; margin-bottom: 5px; }
+    .sim-risk-row.crit { background: color-mix(in srgb, var(--sim-danger) 8%, transparent); border: 1px solid color-mix(in srgb, var(--sim-danger) 22%, transparent); }
+    .sim-risk-row.warn { background: color-mix(in srgb, var(--sim-warning) 8%, transparent); border: 1px solid color-mix(in srgb, var(--sim-warning) 22%, transparent); }
+    .sim-escalate { font-size: 9px; font-weight: 600; padding: 4px 9px; border-radius: 5px; background: color-mix(in srgb, var(--sim-danger) 10%, transparent); border: 1px solid color-mix(in srgb, var(--sim-danger) 28%, transparent); color: var(--sim-danger); cursor: default; white-space: nowrap; flex-shrink: 0; }
+    .sim-breach-table { width: 100%; border-collapse: collapse; }
+    .sim-breach-table th { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--sim-text-4); padding: 5px 6px; border-bottom: 1px solid var(--sim-border); text-align: left; }
+    .sim-breach-table td { font-size: 10px; padding: 5px 6px; border-bottom: 1px solid color-mix(in srgb, var(--sim-border) 50%, transparent); color: var(--sim-text-2); font-family: 'JetBrains Mono', monospace; vertical-align: middle; }
+    .sim-breach-table tr:last-child td { border-bottom: none; }
+
+    /* ── Page 2: Cases ── */
+    .sim-filter-row { display: flex; gap: 5px; margin-bottom: 10px; }
+    .sim-filter-pill { font-size: 9px; font-weight: 600; padding: 4px 10px; border-radius: 100px; border: 1px solid var(--sim-border); color: var(--sim-text-4); cursor: default; }
+    .sim-filter-pill.active { background: var(--sim-accent); border-color: var(--sim-accent); color: #fff; }
+    .sim-drawer { position: absolute; right: 0; top: 0; bottom: 0; width: 210px; background: var(--sim-surface); border-left: 1px solid var(--sim-border); padding: 14px; transform: translateX(100%); transition: transform .4s ease .55s; overflow-y: auto; scrollbar-width: none; }
+    .sim-drawer::-webkit-scrollbar { display: none; }
+    .sim-page.active .sim-drawer { transform: translateX(0); }
+    .sim-drawer-title { font-size: 12px; font-weight: 700; color: var(--sim-text-1); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .sim-drawer-ring { display: flex; flex-direction: column; align-items: center; margin: 8px 0 12px; gap: 2px; }
+    .sim-workflow { display: flex; align-items: center; gap: 4px; margin: 8px 0 10px; flex-wrap: wrap; }
+    .sim-wf { font-size: 8px; font-weight: 600; padding: 3px 7px; border-radius: 4px; }
+    .sim-wf.done { background: color-mix(in srgb, var(--sim-success) 12%, transparent); color: var(--sim-success); }
+    .sim-wf.active { background: var(--sim-accent); color: #fff; }
+    .sim-wf.todo { background: var(--sim-surface-2); color: var(--sim-text-4); }
+    .sim-wf-arr { font-size: 8px; color: var(--sim-text-4); }
+    .sim-df { margin-bottom: 8px; }
+    .sim-dl { font-size: 8px; text-transform: uppercase; letter-spacing: .05em; color: var(--sim-text-4); margin-bottom: 1px; }
+    .sim-dv { font-size: 10px; color: var(--sim-text-2); font-weight: 500; }
+
+    /* ── Page 3: Reports ── */
+    .sim-rep-row { display: flex; align-items: center; padding: 10px 12px; border-radius: 8px; margin-bottom: 6px; background: var(--sim-surface); border: 1px solid var(--sim-border); gap: 10px; }
+    .sim-rep-icon { color: var(--sim-text-4); flex-shrink: 0; }
+    .sim-rep-info { flex: 1; min-width: 0; }
+    .sim-rep-period { font-size: 11px; font-weight: 600; color: var(--sim-text-1); }
+    .sim-rep-sub { font-size: 9px; color: var(--sim-text-4); margin-top: 1px; }
+    .sim-rep-action { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .sim-spinner { width: 13px; height: 13px; border: 2px solid var(--sim-border); border-top-color: var(--sim-accent); border-radius: 50%; animation: spin .7s linear infinite; }
+    .sim-dl-btn { font-size: 9px; font-weight: 600; padding: 5px 11px; border-radius: 5px; background: var(--sim-accent); color: #fff; cursor: default; display: flex; align-items: center; gap: 5px; }
+    .sim-gen-btn { font-size: 9px; font-weight: 600; padding: 5px 11px; border-radius: 5px; border: 1px solid var(--sim-border); background: transparent; color: var(--sim-text-2); cursor: default; }
+    .sim-callout { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border-radius: 8px; margin-top: 8px; background: color-mix(in srgb, var(--sim-accent) 8%, transparent); border: 1px solid color-mix(in srgb, var(--sim-accent) 22%, transparent); }
+    .sim-callout-txt { font-size: 10px; color: var(--sim-accent); line-height: 1.55; }
+    .sim-toast { position: absolute; top: 12px; right: 12px; background: var(--sim-surface); border: 1px solid var(--sim-border); border-radius: 10px; padding: 10px 13px; max-width: 190px; box-shadow: 0 6px 20px rgba(0,0,0,.15); opacity: 0; transform: translateY(-8px); transition: opacity .35s ease 1.6s, transform .35s ease 1.6s; }
+    .sim-page.active .sim-toast { opacity: 1; transform: translateY(0); }
+    .sim-toast-title { font-weight: 700; color: var(--sim-text-1); font-size: 10px; margin-bottom: 2px; }
+    .sim-toast-body { color: var(--sim-text-4); font-size: 9px; line-height: 1.4; }
+
+    /* ── Page 4: Settings ── */
+    .sim-admin-banner { background: color-mix(in srgb, var(--sim-accent) 10%, transparent); border: 1px solid color-mix(in srgb, var(--sim-accent) 25%, transparent); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--sim-accent); font-weight: 500; }
+    .sim-settings-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sim-section-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--sim-text-4); margin-bottom: 8px; }
+    .sim-vault-status { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .sim-sdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .sim-sdot.green { background: var(--sim-success); animation: spulse 2s infinite; }
+    .sim-sdot.red { background: var(--sim-danger); }
+    .sim-vault-name { font-size: 11px; font-weight: 600; color: var(--sim-text-1); }
+    .sim-vault-sub { font-size: 9px; color: var(--sim-text-4); }
+    .sim-vault-url { font-size: 9px; font-family: 'JetBrains Mono', monospace; color: var(--sim-text-3); background: var(--sim-surface-2); border: 1px solid var(--sim-border); border-radius: 5px; padding: 4px 8px; margin-bottom: 8px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sim-sync-tbl { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+    .sim-sync-tbl th { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--sim-text-4); padding: 4px 5px; border-bottom: 1px solid var(--sim-border); text-align: left; }
+    .sim-sync-tbl td { font-size: 9px; padding: 4px 5px; border-bottom: 1px solid color-mix(in srgb, var(--sim-border) 50%, transparent); color: var(--sim-text-2); font-family: 'JetBrains Mono', monospace; }
+    .sim-sync-tbl tr:last-child td { border-bottom: none; }
+    .sim-wh-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--sim-border); }
+    .sim-wh-row:last-child { border-bottom: none; }
+    .sim-wh-icon { width: 22px; height: 22px; flex-shrink: 0; }
+    .sim-wh-info { flex: 1; min-width: 0; }
+    .sim-wh-name { font-size: 11px; font-weight: 600; color: var(--sim-text-1); }
+    .sim-wh-url { font-size: 9px; color: var(--sim-text-4); font-family: 'JetBrains Mono', monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sim-sla-cfg-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid color-mix(in srgb, var(--sim-border) 50%, transparent); }
+    .sim-sla-cfg-row:last-child { border-bottom: none; }
+    .sim-sla-priority { font-size: 10px; color: var(--sim-text-2); }
+    .sim-sla-hrs { font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--sim-text-1); }
+    .sim-usr-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid color-mix(in srgb, var(--sim-border) 50%, transparent); }
+    .sim-usr-row:last-child { border-bottom: none; }
+    .sim-usr-av { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+    .sim-usr-name { font-size: 10px; font-weight: 500; color: var(--sim-text-1); }
+    .sim-usr-email { font-size: 9px; color: var(--sim-text-4); }
+    .sim-role { font-size: 8px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-left: auto; flex-shrink: 0; }
+    .sim-role.admin { background: color-mix(in srgb, var(--sim-accent) 12%, transparent); color: var(--sim-accent); border: 1px solid color-mix(in srgb, var(--sim-accent) 25%, transparent); }
+    .sim-role.viewer { background: var(--sim-surface-2); color: var(--sim-text-4); border: 1px solid var(--sim-border); }
+
+    /* Route pills */
+    .sim-route-pills { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+    .sim-route-pill { height: 4px; border-radius: 2px; background: var(--border); transition: all .3s ease; cursor: pointer; }
+    .sim-route-pill.active { background: var(--accent); }
+
+    @keyframes spulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    @keyframes ttick { 50%{opacity:.6} }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Section scaffolding ── */
+    section { padding: 80px 0; }
+    .section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.2; color: var(--text-1); margin-bottom: 16px; }
+    .section-sub { font-size: 17px; color: var(--text-3); line-height: 1.65; max-width: 560px; }
+    .section-sub.centered { margin: 0 auto; text-align: center; }
+    .text-center { text-align: center; }
+
+    /* Pain */
+    .pain-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-top: 48px; }
+    .pain-cell { background: var(--surface); padding: 32px 28px; }
+    .pain-num { font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-4); margin-bottom: 16px; }
+    .pain-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .pain-icon.danger { background: var(--danger-bg); border: 1px solid var(--danger-border); }
+    .pain-icon.warning { background: var(--warning-bg); border: 1px solid var(--warning-border); }
+    .pain-icon.info { background: var(--accent-tint); border: 1px solid var(--accent-border); }
+    .pain-icon svg { width: 20px; height: 20px; }
+    .pain-icon.danger svg { stroke: var(--danger-text); } .pain-icon.warning svg { stroke: var(--warning-text); } .pain-icon.info svg { stroke: var(--accent); }
+    .pain-h3 { font-size: 15px; font-weight: 600; color: var(--text-1); margin-bottom: 8px; line-height: 1.35; }
+    .pain-body { font-size: 14px; color: var(--text-3); line-height: 1.65; }
+
+    /* Features */
+    .features-section { background: var(--bg); }
+    .features-intro { max-width: 560px; margin-bottom: 48px; }
+    .module-block { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .module-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; transition: border-color .2s; }
+    .module-card:hover { border-color: var(--accent-border); }
+    .module-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); background: var(--accent-tint); border: 1px solid var(--accent-border); border-radius: 5px; padding: 3px 8px; display: inline-block; margin-bottom: 14px; }
+    .module-h3 { font-size: 17px; font-weight: 700; color: var(--text-1); margin-bottom: 10px; letter-spacing: -0.01em; }
+    .module-body { font-size: 14px; color: var(--text-3); line-height: 1.65; margin-bottom: 16px; }
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .feature-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-3); line-height: 1.5; }
+    .feature-list li::before { content: '✓'; color: var(--accent); font-weight: 700; font-size: 12px; margin-top: 1px; flex-shrink: 0; }
+    .module-card.wide { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .compliance-preview { background: var(--surface-2); border-radius: 10px; padding: 16px; border: 1px solid var(--border); }
+    .compliance-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-2); font-size: 13px; }
+    .compliance-row:last-child { border-bottom: none; }
+    .compliance-product { color: var(--text-2); font-weight: 500; }
+    .compliance-pct { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+    .pct-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .pct-bar { height: 4px; border-radius: 2px; background: var(--border); width: 72px; overflow: hidden; }
+    .pct-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+    .pct-bar-fill.warn { background: var(--warning-text); }
+
+    /* How it works */
+    .hiw-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+    .step { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+    .step-num { width: 36px; height: 36px; background: var(--accent); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
+    .step-h3 { font-size: 16px; font-weight: 700; color: var(--text-1); }
+    .step-body { font-size: 14px; color: var(--text-3); line-height: 1.65; }
+    .step-detail { background: var(--surface-2); border-radius: 9px; border: 1px solid var(--border); padding: 10px 14px; font-size: 11px; color: var(--text-3); font-family: 'JetBrains Mono', monospace; width: 100%; }
+
+    /* Voices */
+    .voices-section { background: var(--bg); }
+    .voices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 44px; }
+    .voice-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 14px; transition: border-color .2s; }
+    .voice-card:hover { border-color: var(--accent-border); }
+    .voice-card.featured { grid-column: span 2; border-top: 3px solid var(--accent); flex-direction: row; gap: 24px; align-items: flex-start; }
+    .voice-source { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .voice-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .voice-avatar.maps { background: var(--accent-tint); color: var(--accent); }
+    .voice-platform { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-4); margin-bottom: 1px; }
+    .voice-author { font-size: 12px; font-weight: 600; color: var(--text-2); }
+    .voice-quote { font-size: 14px; color: var(--text-2); line-height: 1.7; font-style: italic; border-left: 3px solid var(--accent); padding-left: 14px; }
+    .voice-quote strong { font-style: normal; color: var(--text-1); }
+    .voice-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; border: 1px solid; }
+    .voice-tag.danger { color: var(--danger-text); background: var(--danger-bg); border-color: var(--danger-border); }
+    .voice-tag.warning { color: var(--warning-text); background: var(--warning-bg); border-color: var(--warning-border); }
+    .voice-tag.info { color: var(--accent); background: var(--accent-tint); border-color: var(--accent-border); }
+    .voice-body-wrap { flex: 1; }
+
+    /* CTA — hardcoded dark so it reads correctly in both light and dark page themes */
+    .cta-section { background: #0f1419; padding: 80px 0; }
+    .cta-inner { text-align: center; max-width: 560px; margin: 0 auto; }
+    .cta-h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -0.025em; color: #ffffff; line-height: 1.2; margin-bottom: 16px; }
+    .cta-sub { font-size: 16px; color: rgba(255,255,255,.55); line-height: 1.65; margin-bottom: 32px; }
+    .cta-actions { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .btn-cta-primary { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: #0f1419; background: #ffffff; border-radius: 10px; padding: 14px 32px; text-decoration: none; border: none; cursor: pointer; font-family: inherit; transition: opacity .15s; }
+    .btn-cta-primary:hover { opacity: .9; }
+    .btn-cta-sec { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: rgba(255,255,255,.65); border: 1px solid rgba(255,255,255,.22); border-radius: 10px; padding: 14px 28px; text-decoration: none; transition: all .15s; }
+    .btn-cta-sec:hover { color: #ffffff; border-color: rgba(255,255,255,.48); }
+    .cta-trust { margin-top: 20px; font-size: 12px; color: rgba(255,255,255,.32); }
+
+    /* Footer */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 32px 0; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-copy { font-size: 13px; color: var(--text-4); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 13px; color: var(--text-4); text-decoration: none; transition: color .15s; }
+    .footer-links a:hover { color: var(--text-2); }
+
+    /* Modal */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 36px; width: 100%; max-width: 440px; margin: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.18); position: relative; }
+    .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-4); line-height: 1; }
+    .modal-h2 { font-size: 20px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; letter-spacing: -0.02em; }
+    .modal-sub { font-size: 14px; color: var(--text-3); margin-bottom: 24px; line-height: 1.55; }
+    .form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-row label { font-size: 12px; font-weight: 600; color: var(--text-3); }
+    .form-row input, .form-row select { height: 40px; border: 1px solid var(--border); border-radius: 8px; padding: 0 12px; font-size: 14px; color: var(--text-1); font-family: 'Manrope', sans-serif; background: var(--surface); outline: none; width: 100%; transition: border-color .15s; }
+    .form-row input::placeholder { color: var(--text-4); }
+    .form-row input:focus, .form-row select:focus { border-color: var(--accent); }
+    .form-submit { width: 100%; height: 44px; background: var(--accent); color: #fff; border: none; border-radius: 9px; font-size: 15px; font-weight: 700; font-family: 'Manrope', sans-serif; cursor: pointer; margin-top: 8px; transition: opacity .15s; }
+    .form-submit:hover { opacity: .9; }
+    .form-submit:disabled { opacity: .6; cursor: not-allowed; }
+    .form-success { display: none; text-align: center; padding: 20px 0; }
+    .form-success-icon { font-size: 36px; margin-bottom: 12px; }
+    .form-success h3 { font-size: 18px; font-weight: 700; color: var(--text-1); margin-bottom: 8px; }
+    .form-success p { font-size: 14px; color: var(--text-3); }
+
+    @media (max-width: 768px) {
+      .sim-kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .sim-2col { grid-template-columns: 1fr; }
+      .sim-settings-grid { grid-template-columns: 1fr; }
+      .pain-grid { grid-template-columns: 1fr; }
+      .module-block { grid-template-columns: 1fr; }
+      .module-card.wide { grid-column: span 1; grid-template-columns: 1fr; }
+      .steps-row { grid-template-columns: 1fr; }
+      .voices-grid { grid-template-columns: 1fr; }
+      .voice-card.featured { grid-column: span 1; flex-direction: column; }
+      .nav-link { display: none; }
+      .sim-body { grid-template-columns: 130px 1fr; }
+      .sim-drawer-hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark"><span>IQ</span></div>
+      <span class="logo-name">Inqura</span>
+      <span class="logo-by">by VirsAI</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#how-it-works" class="nav-link">How it works</a>
+      <a href="#voices" class="nav-link">Why Inqura</a>
+      <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+      <a href="/dashboard/login" class="btn-login">Log in</a>
+      <button class="btn-demo-sm" onclick="openModal()">Book a demo</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">Veeva-native · No data migration required</div>
+    <h1 class="hero-h1">Your Vault has the data.<br><em>Inqura turns it into decisions.</em></h1>
+    <p class="hero-sub">Real-time inquiry intelligence, SLA countdown monitoring, and compliance reporting — built exclusively for Medical Affairs teams already running on Veeva.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openModal()">Book a demo <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <a href="#features" class="btn-secondary">See the product</a>
+    </div>
+    <p class="hero-note">No data migration · Connects in &lt;1 day · No Vault changes required</p>
+
+    <!-- ═══ Live App Simulation ═══ -->
+    <div class="sim-wrap">
+      <!-- Browser chrome -->
+      <div class="sim-chrome">
+        <div class="sim-titlebar">
+          <span class="sim-dot r"></span><span class="sim-dot y"></span><span class="sim-dot g"></span>
+          <span class="sim-url" id="simUrl">inqura.virsaisolutions.com/dashboard</span>
+        </div>
+        <div class="sim-progress"><div class="sim-progress-fill" id="simProgress"></div></div>
+      </div>
+
+      <!-- App shell -->
+      <div class="sim-body">
+        <!-- Sidebar -->
+        <div class="sim-sidebar">
+          <div class="sim-sidebar-top">
+            <div class="sim-logo-mark"><span>IQ</span></div>
+            <span class="sim-logo-text">Inqura</span>
+            <div class="sim-bell">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <div class="sim-bell-badge">3</div>
+            </div>
+          </div>
+          <nav class="sim-nav">
+            <div class="sim-nav-item" onclick="goTo(0)">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              Overview
+            </div>
+            <div class="sim-nav-item" onclick="goTo(1)">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              SLA Monitor
+            </div>
+            <div class="sim-nav-item" onclick="goTo(2)">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              Cases
+            </div>
+            <div class="sim-nav-item" onclick="goTo(3)">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+              Reports
+            </div>
+            <div class="sim-nav-sep"></div>
+            <div class="sim-nav-item" onclick="goTo(4)">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 1.64 3.22M4.93 19.07a10 10 0 0 1-1.64-3.22m14.78 3.22a10 10 0 0 1-3.22 1.64M4.93 4.93a10 10 0 0 1 3.22-1.64"/></svg>
+              Settings
+            </div>
+          </nav>
+          <div class="sim-user">
+            <div class="sim-avatar">KL</div>
+            <div class="sim-user-info">k.luepke@scpharma.com<br><span style="color:var(--sim-accent);font-weight:600">Admin</span></div>
+          </div>
+        </div>
+
+        <div class="sim-main">
+
+          <!-- ── Page 0: Overview ── -->
+          <div class="sim-page active" id="page-0">
+            <div class="sim-topbar">
+              <span class="sim-page-title">Overview <span style="color:var(--sim-text-4);font-weight:400">— June 2026</span></span>
+              <div class="sim-topbar-right">
+                <span class="sim-sync-badge"><span class="sim-sync-dot"></span>Synced 4m ago</span>
+                <span class="sim-btn-sm">Sync now</span>
+              </div>
+            </div>
+            <!-- 6 KPI cards -->
+            <div class="sim-kpi-6">
+              <div class="sim-kpi">
+                <div class="sim-kpi-lbl">Open Cases</div>
+                <div class="sim-kpi-inner"><div class="sim-kpi-val accent">142</div></div>
+                <div class="sim-kpi-sub">↑ 12 vs last week</div>
+              </div>
+              <div class="sim-kpi">
+                <div class="sim-kpi-lbl">SLA at Risk</div>
+                <div class="sim-kpi-inner"><div class="sim-kpi-val danger">7</div></div>
+                <div class="sim-kpi-sub">Needs attention</div>
+              </div>
+              <div class="sim-kpi">
+                <div class="sim-kpi-lbl">SLA Compliance</div>
+                <div class="sim-kpi-inner">
+                  <div class="sim-kpi-val success">96.4%</div>
+                  <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden>
+                    <circle cx="13" cy="13" r="9" fill="none" stroke="var(--sim-border)" stroke-width="2.5"/>
+                    <circle id="kpiRing" cx="13" cy="13" r="9" fill="none" stroke="var(--sim-success)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="56.5" stroke-dashoffset="56.5" transform="rotate(-90 13 13)" style="transition:stroke-dashoffset 1.3s ease .3s"/>
+                  </svg>
+                </div>
+                <div class="sim-kpi-sub">Year to date</div>
+              </div>
+              <div class="sim-kpi">
+                <div class="sim-kpi-lbl">Avg Response</div>
+                <div class="sim-kpi-inner"><div class="sim-kpi-val warning">31.2h</div></div>
+                <div class="sim-kpi-sub">vs 48h target</div>
+              </div>
+              <div class="sim-kpi">
+                <div class="sim-kpi-lbl">Total YTD</div>
+                <div class="sim-kpi-inner"><div class="sim-kpi-val">1,847</div></div>
+                <div class="sim-kpi-sub">Inquiries received</div>
+              </div>
+              <div class="sim-kpi">
+                <div class="sim-kpi-lbl">Fulfilled YTD</div>
+                <div class="sim-kpi-inner"><div class="sim-kpi-val success">1,593</div></div>
+                <div class="sim-kpi-sub">86% of total</div>
+              </div>
+            </div>
+            <!-- Main grid: left 3 cols + right 2 cols -->
+            <div class="sim-grid-53">
+              <div class="sim-left-col">
+                <div class="sim-card">
+                  <div class="sim-card-title">Monthly inquiry volume <span style="font-size:9px;font-weight:400;color:var(--sim-text-4)">Last 12 months</span></div>
+                  <div class="sim-bars">
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:35%"></div><div class="sim-bar-lbl">Jul</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:40%"></div><div class="sim-bar-lbl">Aug</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:46%"></div><div class="sim-bar-lbl">Sep</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:44%"></div><div class="sim-bar-lbl">Oct</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:52%"></div><div class="sim-bar-lbl">Nov</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:57%"></div><div class="sim-bar-lbl">Dec</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:53%"></div><div class="sim-bar-lbl">Jan</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:66%"></div><div class="sim-bar-lbl">Feb</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:70%"></div><div class="sim-bar-lbl">Mar</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:77%"></div><div class="sim-bar-lbl">Apr</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar" style="height:73%"></div><div class="sim-bar-lbl">May</div></div>
+                    <div class="sim-bar-col"><div class="sim-bar accent" style="height:88%"></div><div class="sim-bar-lbl" style="color:var(--sim-accent)">Jun</div></div>
+                  </div>
+                </div>
+                <div class="sim-card">
+                  <div class="sim-card-title">Topic breakdown <span style="font-size:9px;font-weight:400;color:var(--sim-text-4)">Top 7 inquiry topics</span></div>
+                  <div class="sim-topic-row"><span class="sim-topic-lbl">Dosing &amp; Administration</span><div class="sim-topic-track"><div class="sim-topic-fill" style="width:88%"></div></div><span class="sim-topic-num">148</span></div>
+                  <div class="sim-topic-row"><span class="sim-topic-lbl">Off-label inquiries</span><div class="sim-topic-track"><div class="sim-topic-fill" style="width:62%"></div></div><span class="sim-topic-num">104</span></div>
+                  <div class="sim-topic-row"><span class="sim-topic-lbl">Safety / ADRs</span><div class="sim-topic-track"><div class="sim-topic-fill" style="width:54%"></div></div><span class="sim-topic-num">91</span></div>
+                  <div class="sim-topic-row"><span class="sim-topic-lbl">Drug interactions</span><div class="sim-topic-track"><div class="sim-topic-fill" style="width:38%"></div></div><span class="sim-topic-num">64</span></div>
+                  <div class="sim-topic-row"><span class="sim-topic-lbl">Comparative efficacy</span><div class="sim-topic-track"><div class="sim-topic-fill" style="width:28%"></div></div><span class="sim-topic-num">47</span></div>
+                  <div class="sim-topic-row"><span class="sim-topic-lbl">Mechanism of action</span><div class="sim-topic-track"><div class="sim-topic-fill" style="width:20%"></div></div><span class="sim-topic-num">34</span></div>
+                  <div class="sim-topic-row"><span class="sim-topic-lbl">Pharmacokinetics</span><div class="sim-topic-track"><div class="sim-topic-fill" style="width:14%"></div></div><span class="sim-topic-num">23</span></div>
+                </div>
+              </div>
+              <div class="sim-right-col">
+                <div class="sim-card">
+                  <div class="sim-card-title">Channel breakdown</div>
+                  <div class="sim-ch-row"><span class="sim-ch-dot" style="background:#5b7cfa"></span><span class="sim-ch-lbl">Email</span><span class="sim-ch-pct">41%</span><span class="sim-ch-num">68</span></div>
+                  <div class="sim-ch-row"><span class="sim-ch-dot" style="background:#7fcaa3"></span><span class="sim-ch-lbl">CRM Field</span><span class="sim-ch-pct">28%</span><span class="sim-ch-num">46</span></div>
+                  <div class="sim-ch-row"><span class="sim-ch-dot" style="background:#e0b46a"></span><span class="sim-ch-lbl">Phone</span><span class="sim-ch-pct">20%</span><span class="sim-ch-num">33</span></div>
+                  <div class="sim-ch-row"><span class="sim-ch-dot" style="background:#ec8a8a"></span><span class="sim-ch-lbl">Web</span><span class="sim-ch-pct">11%</span><span class="sim-ch-num">18</span></div>
+                </div>
+                <div class="sim-card">
+                  <div class="sim-card-title">Product split</div>
+                  <div class="sim-prod-r"><span class="sim-prod-dot" style="background:#5b7cfa"></span><span class="sim-prod-lbl">Cardizem XR</span><span class="sim-prod-pct">32%</span><span class="sim-prod-num">54</span></div>
+                  <div class="sim-prod-r"><span class="sim-prod-dot" style="background:#7fcaa3"></span><span class="sim-prod-lbl">Nexavar 200</span><span class="sim-prod-pct">24%</span><span class="sim-prod-num">40</span></div>
+                  <div class="sim-prod-r"><span class="sim-prod-dot" style="background:#e0b46a"></span><span class="sim-prod-lbl">Ibrutix 420mg</span><span class="sim-prod-pct">21%</span><span class="sim-prod-num">35</span></div>
+                  <div class="sim-prod-r"><span class="sim-prod-dot" style="background:#ec8a8a"></span><span class="sim-prod-lbl">Venapro-R</span><span class="sim-prod-pct">14%</span><span class="sim-prod-num">23</span></div>
+                  <div class="sim-prod-r"><span class="sim-prod-dot" style="background:#9b8cf5"></span><span class="sim-prod-lbl">Lumara-HD</span><span class="sim-prod-pct">9%</span><span class="sim-prod-num">15</span></div>
+                </div>
+              </div>
+            </div>
+            <!-- Recent cases table -->
+            <div class="sim-card">
+              <div class="sim-card-title">Recent cases <span style="font-size:9px;font-weight:400;color:var(--sim-text-4)">Last 20 inquiries · click a row to view details</span><span class="sim-badge neutral" style="margin-left:auto">20 shown</span></div>
+              <table class="sim-table">
+                <thead><tr><th>Case ID</th><th>Topic</th><th>Product</th><th>Channel</th><th>Submitted</th><th>SLA</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr class="hl"><td class="mono">INQ-2841</td><td>Dosing</td><td>Ibrutix</td><td>Email</td><td class="mono">18 Jun</td><td><span class="sim-timer danger" id="t1">3h 12m</span></td><td><span class="sim-badge danger">In Review</span></td></tr>
+                  <tr><td class="mono">INQ-2840</td><td>Off-label</td><td>Cardizem XR</td><td>CRM</td><td class="mono">18 Jun</td><td><span class="sim-timer warning" id="t2">14h 30m</span></td><td><span class="sim-badge accent">In Review</span></td></tr>
+                  <tr><td class="mono">INQ-2838</td><td>Safety / ADR</td><td>Nexavar 200</td><td>Phone</td><td class="mono">17 Jun</td><td><span class="sim-timer safe">36h 00m</span></td><td><span class="sim-badge neutral">Open</span></td></tr>
+                  <tr><td class="mono">INQ-2835</td><td>Dosing</td><td>Venapro-R</td><td>Web</td><td class="mono">16 Jun</td><td style="font-size:9px;color:var(--sim-text-4)">Fulfilled</td><td><span class="sim-badge success">Fulfilled</span></td></tr>
+                  <tr><td class="mono">INQ-2832</td><td>Drug interaction</td><td>Cardizem XR</td><td>Email</td><td class="mono">15 Jun</td><td style="font-size:9px;color:var(--sim-text-4)">Fulfilled</td><td><span class="sim-badge success">Fulfilled</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── Page 1: SLA Monitor ── -->
+          <div class="sim-page" id="page-1">
+            <div class="sim-topbar">
+              <div>
+                <div class="sim-page-title">SLA Monitor</div>
+                <div style="font-size:9px;color:var(--sim-text-4);margin-top:1px">This Month · 48-hour response commitment</div>
+              </div>
+              <div class="sim-topbar-right">
+                <div class="sim-period-seg"><span class="sim-period-opt">Week</span><span class="sim-period-opt active">Month</span><span class="sim-period-opt">Quarter</span></div>
+                <span class="sim-btn-sm">Export PDF</span>
+              </div>
+            </div>
+            <!-- 3 KPIs -->
+            <div class="sim-kpi-3">
+              <div class="sim-sla-kpi"><div class="sim-sla-kpi-lbl">Overall SLA Compliance</div><div class="sim-sla-kpi-val" style="color:var(--sim-success)">96.4%</div><div class="sim-sla-kpi-sub">✓ Above target (95%)</div></div>
+              <div class="sim-sla-kpi"><div class="sim-sla-kpi-lbl">Average Response Time</div><div class="sim-sla-kpi-val" style="color:var(--sim-warning)">31.2h</div><div class="sim-sla-kpi-sub">Fulfilled cases</div></div>
+              <div class="sim-sla-kpi"><div class="sim-sla-kpi-lbl">Cases in Period</div><div class="sim-sla-kpi-val">312</div><div class="sim-sla-kpi-sub">301 fulfilled · 11 open</div></div>
+            </div>
+            <!-- Product table + 30-day trend -->
+            <div style="display:grid;grid-template-columns:3fr 2fr;gap:8px;margin-bottom:8px">
+              <div class="sim-card">
+                <div class="sim-card-title">SLA by product <span style="font-size:9px;font-weight:400;color:var(--sim-text-4)">This month</span></div>
+                <table class="sim-prod-table">
+                  <thead><tr><th>Product</th><th>Cases</th><th>SLA %</th><th>Avg Resp</th><th>Breaches</th></tr></thead>
+                  <tbody>
+                    <tr><td style="font-weight:500">Cardizem XR</td><td class="mono" style="font-family:'JetBrains Mono',monospace">98</td><td><div class="sim-pct-cell"><span class="sim-pct-val" style="color:var(--sim-success)">98.1%</span><div class="sim-pct-bar"><div class="sim-pct-fill2" data-pct="98" style="background:var(--sim-success)"></div></div></div></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">28.4h</td><td style="font-family:'JetBrains Mono',monospace;color:var(--sim-text-4)">—</td></tr>
+                    <tr><td style="font-weight:500">Nexavar 200</td><td class="mono" style="font-family:'JetBrains Mono',monospace">84</td><td><div class="sim-pct-cell"><span class="sim-pct-val" style="color:var(--sim-accent)">95.3%</span><div class="sim-pct-bar"><div class="sim-pct-fill2" data-pct="95" style="background:var(--sim-accent)"></div></div></div></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">33.1h</td><td style="font-family:'JetBrains Mono',monospace;color:var(--sim-text-4)">—</td></tr>
+                    <tr><td style="font-weight:500">Ibrutix</td><td class="mono" style="font-family:'JetBrains Mono',monospace">76</td><td><div class="sim-pct-cell"><span class="sim-pct-val" style="color:var(--sim-warning)">88.4%</span><div class="sim-pct-bar"><div class="sim-pct-fill2" data-pct="88" style="background:var(--sim-warning)"></div></div></div></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">41.2h</td><td style="font-family:'JetBrains Mono',monospace;color:var(--sim-danger);font-weight:700">9</td></tr>
+                    <tr><td style="font-weight:500">Venapro-R</td><td class="mono" style="font-family:'JetBrains Mono',monospace">54</td><td><div class="sim-pct-cell"><span class="sim-pct-val" style="color:var(--sim-success)">100%</span><div class="sim-pct-bar"><div class="sim-pct-fill2" data-pct="100" style="background:var(--sim-success)"></div></div></div></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px">24.7h</td><td style="font-family:'JetBrains Mono',monospace;color:var(--sim-text-4)">—</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="sim-card">
+                <div class="sim-card-title">30-day trend <span style="font-size:9px;font-weight:400;color:var(--sim-text-4)">dashed = 95% target</span></div>
+                <svg viewBox="0 0 230 90" class="sim-trend-svg">
+                  <defs><linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--sim-accent)" stop-opacity=".15"/><stop offset="100%" stop-color="var(--sim-accent)" stop-opacity="0"/></linearGradient></defs>
+                  <!-- axis labels -->
+                  <text x="0" y="8" font-size="7" fill="var(--sim-text-4)" font-family="JetBrains Mono,monospace">100%</text>
+                  <text x="0" y="28" font-size="7" fill="var(--sim-success)" font-family="JetBrains Mono,monospace">95%</text>
+                  <text x="0" y="82" font-size="7" fill="var(--sim-text-4)" font-family="JetBrains Mono,monospace">80%</text>
+                  <!-- target line: 95% = y=24 in 80-100 mapped to 80-0 → y=80-(95-80)*80/20=80-60=20, shifted down 8 for labels → y=28 -->
+                  <line x1="22" y1="28" x2="230" y2="28" stroke="var(--sim-success)" stroke-width="1" stroke-dasharray="4 3"/>
+                  <!-- area fill -->
+                  <path d="M22,47 L30,39 L38,28 L46,18 L54,20 L62,13 L70,18 L78,10 L86,13 L94,15 L102,22 L110,24 L118,18 L126,13 L134,20 L142,18 L150,11 L158,13 L166,18 L174,20 L182,58 L190,22 L198,13 L206,20 L214,13 L222,15 L230,20 L230,85 L22,85 Z" fill="url(#trendGrad)"/>
+                  <!-- trend line -->
+                  <polyline fill="none" stroke="var(--sim-accent)" stroke-width="1.8" stroke-linejoin="round" points="22,47 30,39 38,28 46,18 54,20 62,13 70,18 78,10 86,13 94,15 102,22 110,24 118,18 126,13 134,20 142,18 150,11 158,13 166,18 174,20 182,58 190,22 198,13 206,20 214,13 222,15 230,20"/>
+                  <!-- breach day dot -->
+                  <circle cx="182" cy="58" r="3.5" fill="var(--sim-danger)" opacity="0.9"/>
+                  <text x="170" y="72" font-size="7" fill="var(--sim-danger)" font-family="JetBrains Mono,monospace">breach</text>
+                </svg>
+              </div>
+            </div>
+            <!-- Risk queue -->
+            <div class="sim-card" style="margin-bottom:8px">
+              <div class="sim-card-title">Cases requiring immediate attention<span class="sim-badge danger" style="margin-left:auto">3 at risk</span></div>
+              <div class="sim-risk-row crit">
+                <svg width="36" height="36" viewBox="0 0 36 36" style="flex-shrink:0"><circle cx="18" cy="18" r="14" fill="none" stroke="color-mix(in srgb,var(--sim-danger) 22%,transparent)" stroke-width="3"/><circle cx="18" cy="18" r="14" fill="none" stroke="var(--sim-danger)" stroke-width="3" stroke-linecap="round" stroke-dasharray="88" stroke-dashoffset="82" transform="rotate(-90 18 18)"/></svg>
+                <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--sim-text-1)">INQ-2841</span><span class="sim-badge accent">Ibrutix</span></div><div style="font-size:9px;color:var(--sim-text-3)">Dosing — Oncology</div></div>
+                <span class="sim-timer danger" style="font-size:11px" id="t1b">3h 12m</span>
+                <span class="sim-badge danger">in review</span>
+                <span class="sim-escalate">Escalate →</span>
+              </div>
+              <div class="sim-risk-row warn">
+                <svg width="36" height="36" viewBox="0 0 36 36" style="flex-shrink:0"><circle cx="18" cy="18" r="14" fill="none" stroke="color-mix(in srgb,var(--sim-warning) 22%,transparent)" stroke-width="3"/><circle cx="18" cy="18" r="14" fill="none" stroke="var(--sim-warning)" stroke-width="3" stroke-linecap="round" stroke-dasharray="88" stroke-dashoffset="57" transform="rotate(-90 18 18)"/></svg>
+                <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--sim-text-1)">INQ-2840</span><span class="sim-badge neutral">Cardizem XR</span></div><div style="font-size:9px;color:var(--sim-text-3)">Off-label — Cardiology</div></div>
+                <span class="sim-timer warning" style="font-size:11px" id="t2b">14h 30m</span>
+                <span class="sim-badge warning">in review</span>
+                <span class="sim-escalate">Escalate →</span>
+              </div>
+              <div class="sim-risk-row warn">
+                <svg width="36" height="36" viewBox="0 0 36 36" style="flex-shrink:0"><circle cx="18" cy="18" r="14" fill="none" stroke="color-mix(in srgb,var(--sim-warning) 22%,transparent)" stroke-width="3"/><circle cx="18" cy="18" r="14" fill="none" stroke="var(--sim-warning)" stroke-width="3" stroke-linecap="round" stroke-dasharray="88" stroke-dashoffset="35" transform="rotate(-90 18 18)"/></svg>
+                <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--sim-text-1)">INQ-2836</span><span class="sim-badge neutral">Nexavar 200</span></div><div style="font-size:9px;color:var(--sim-text-3)">Safety — Oncology</div></div>
+                <span class="sim-timer warning" style="font-size:11px">18h 02m</span>
+                <span class="sim-badge warning">open</span>
+                <span class="sim-escalate">Escalate →</span>
+              </div>
+            </div>
+            <!-- Breach log -->
+            <div class="sim-card">
+              <div class="sim-card-title">SLA breach log <span style="font-size:9px;font-weight:400;color:var(--sim-text-4)">Cases that missed SLA this month</span></div>
+              <table class="sim-breach-table">
+                <thead><tr><th>Case ID</th><th>Product</th><th>Topic</th><th>Submitted</th><th>Deadline</th><th>Fulfilled</th><th>Over SLA</th></tr></thead>
+                <tbody>
+                  <tr><td>INQ-2798</td><td style="font-family:initial;font-size:10px;color:var(--sim-text-2)">Ibrutix</td><td style="font-family:initial;font-size:10px;color:var(--sim-text-3)">Dosing</td><td>03 Jun</td><td>05 Jun</td><td>05 Jun</td><td style="color:var(--sim-danger);font-weight:700">+6.4h</td></tr>
+                  <tr><td>INQ-2791</td><td style="font-family:initial;font-size:10px;color:var(--sim-text-2)">Ibrutix</td><td style="font-family:initial;font-size:10px;color:var(--sim-text-3)">Off-label</td><td>01 Jun</td><td>03 Jun</td><td>03 Jun</td><td style="color:var(--sim-danger);font-weight:700">+2.1h</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── Page 2: Cases ── -->
+          <div class="sim-page" id="page-2" style="overflow:hidden;padding:0;display:flex;flex-direction:column">
+            <div style="padding:16px 16px 0">
+              <div class="sim-topbar">
+                <span class="sim-page-title">Case Queue <span style="color:var(--sim-text-4);font-weight:400">· 142 cases</span></span>
+                <div class="sim-topbar-right"><span class="sim-btn-sm">Export</span></div>
+              </div>
+              <div class="sim-filter-row">
+                <span class="sim-filter-pill active">All</span>
+                <span class="sim-filter-pill">Open</span>
+                <span class="sim-filter-pill">In Review</span>
+                <span class="sim-filter-pill">Fulfilled</span>
+                <span class="sim-filter-pill">Urgent</span>
+              </div>
+            </div>
+            <div style="flex:1;position:relative;overflow:hidden;padding:0 16px">
+              <table class="sim-table" style="width:calc(100% - 218px)">
+                <thead><tr><th>Case ID</th><th>Topic</th><th>Product</th><th>Channel</th><th>Submitted</th><th>SLA</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr class="hl"><td class="mono">INQ-2841</td><td>Dosing</td><td><span class="sim-badge danger" style="font-size:8px">Ibrutix</span></td><td>Email</td><td class="mono">18 Jun</td><td><span class="sim-timer danger">3h 12m</span></td><td><span class="sim-badge danger">In Review</span></td></tr>
+                  <tr><td class="mono">INQ-2840</td><td>Off-label</td><td><span class="sim-badge neutral" style="font-size:8px">Cardizem XR</span></td><td>CRM</td><td class="mono">18 Jun</td><td><span class="sim-timer warning">14h 30m</span></td><td><span class="sim-badge accent">In Review</span></td></tr>
+                  <tr><td class="mono">INQ-2838</td><td>Safety / ADR</td><td><span class="sim-badge neutral" style="font-size:8px">Nexavar 200</span></td><td>Phone</td><td class="mono">17 Jun</td><td><span class="sim-timer safe">36h 00m</span></td><td><span class="sim-badge neutral">Open</span></td></tr>
+                  <tr><td class="mono">INQ-2835</td><td>Dosing</td><td><span class="sim-badge neutral" style="font-size:8px">Venapro-R</span></td><td>Web</td><td class="mono">16 Jun</td><td style="font-size:9px;color:var(--sim-text-4)">Fulfilled</td><td><span class="sim-badge success">Fulfilled</span></td></tr>
+                  <tr><td class="mono">INQ-2832</td><td>Drug interaction</td><td><span class="sim-badge neutral" style="font-size:8px">Cardizem XR</span></td><td>Email</td><td class="mono">15 Jun</td><td style="font-size:9px;color:var(--sim-text-4)">Fulfilled</td><td><span class="sim-badge success">Fulfilled</span></td></tr>
+                  <tr><td class="mono">INQ-2829</td><td>Comparative</td><td><span class="sim-badge neutral" style="font-size:8px">Ibrutix</span></td><td>CRM</td><td class="mono">14 Jun</td><td style="font-size:9px;color:var(--sim-text-4)">Fulfilled</td><td><span class="sim-badge success">Fulfilled</span></td></tr>
+                </tbody>
+              </table>
+              <!-- Case detail drawer -->
+              <div class="sim-drawer">
+                <div class="sim-drawer-title">
+                  <span style="font-family:'JetBrains Mono',monospace">INQ-2841</span>
+                  <span class="sim-badge danger" style="font-size:8px">Critical</span>
+                </div>
+                <!-- SLA ring -->
+                <div class="sim-drawer-ring">
+                  <svg width="68" height="68" viewBox="0 0 68 68">
+                    <circle cx="34" cy="34" r="28" fill="none" stroke="color-mix(in srgb,var(--sim-danger) 18%,transparent)" stroke-width="5"/>
+                    <circle cx="34" cy="34" r="28" fill="none" stroke="var(--sim-danger)" stroke-width="5" stroke-linecap="round" stroke-dasharray="176" stroke-dashoffset="170" transform="rotate(-90 34 34)"/>
+                  </svg>
+                  <span class="sim-timer danger" style="font-size:14px;margin-top:-2px">3h 12m</span>
+                  <span style="font-size:8px;color:var(--sim-text-4)">remaining of 48h SLA</span>
+                </div>
+                <!-- Workflow -->
+                <div style="margin-bottom:10px">
+                  <div class="sim-dl">Workflow</div>
+                  <div class="sim-workflow">
+                    <span class="sim-wf done">Intake</span>
+                    <span class="sim-wf-arr">→</span>
+                    <span class="sim-wf active">Triage</span>
+                    <span class="sim-wf-arr">→</span>
+                    <span class="sim-wf todo">Review</span>
+                  </div>
+                </div>
+                <div class="sim-df"><div class="sim-dl">Topic</div><div class="sim-dv">Dosing — Oncology</div></div>
+                <div class="sim-df"><div class="sim-dl">Product</div><div class="sim-dv">Ibrutix 420mg</div></div>
+                <div class="sim-df"><div class="sim-dl">Channel</div><div class="sim-dv">Email</div></div>
+                <div class="sim-df"><div class="sim-dl">HCP Specialty</div><div class="sim-dv">Oncologist</div></div>
+                <div class="sim-df"><div class="sim-dl">Institution</div><div class="sim-dv">Memorial Cancer Ctr</div></div>
+                <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px">
+                  <span class="sim-escalate" style="text-align:center;display:block">Escalate → Slack + Teams</span>
+                  <span style="font-size:8px;color:var(--sim-text-4);text-align:center">Notifies your webhook · logs to audit trail</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Page 3: Reports ── -->
+          <div class="sim-page" id="page-3" style="position:relative">
+            <div class="sim-topbar">
+              <span class="sim-page-title">Compliance Reports</span>
+              <div class="sim-topbar-right"><span class="sim-btn-sm">Schedule</span></div>
+            </div>
+            <!-- Report rows: idle, generating, complete states -->
+            <div class="sim-rep-row">
+              <svg class="sim-rep-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              <div class="sim-rep-info"><div class="sim-rep-period">June 2026</div><div class="sim-rep-sub">SLA Compliance Report · 312 cases</div></div>
+              <div class="sim-rep-action"><span style="font-size:9px;color:var(--sim-text-4)">Generating…</span><div class="sim-spinner"></div></div>
+            </div>
+            <div class="sim-rep-row" style="border-color:color-mix(in srgb,var(--sim-accent) 35%,var(--sim-border))">
+              <svg class="sim-rep-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sim-success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 12 18 16 12"/></svg>
+              <div class="sim-rep-info"><div class="sim-rep-period">May 2026</div><div class="sim-rep-sub">SLA Compliance Report · 287 cases</div></div>
+              <div class="sim-rep-action"><span style="font-size:9px;color:var(--sim-success);display:flex;align-items:center;gap:3px">✓ Ready</span><div class="sim-dl-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</div></div>
+            </div>
+            <div class="sim-rep-row">
+              <svg class="sim-rep-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div class="sim-rep-info"><div class="sim-rep-period">April 2026</div><div class="sim-rep-sub">SLA Compliance Report · 261 cases</div></div>
+              <div class="sim-rep-action"><div class="sim-dl-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</div></div>
+            </div>
+            <div class="sim-rep-row">
+              <svg class="sim-rep-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div class="sim-rep-info"><div class="sim-rep-period">March 2026</div><div class="sim-rep-sub">SLA Compliance Report · 248 cases</div></div>
+              <div class="sim-rep-action"><div class="sim-dl-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</div></div>
+            </div>
+            <div class="sim-rep-row">
+              <svg class="sim-rep-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div class="sim-rep-info"><div class="sim-rep-period">February 2026</div><div class="sim-rep-sub">SLA Compliance Report · 234 cases</div></div>
+              <div class="sim-rep-action"><span class="sim-gen-btn">Generate PDF</span></div>
+            </div>
+            <div class="sim-rep-row">
+              <svg class="sim-rep-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div class="sim-rep-info"><div class="sim-rep-period">January 2026</div><div class="sim-rep-sub">SLA Compliance Report · 219 cases</div></div>
+              <div class="sim-rep-action"><span class="sim-gen-btn">Generate PDF</span></div>
+            </div>
+            <!-- Info callout -->
+            <div class="sim-callout">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--sim-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span class="sim-callout-txt">Reports generated in background — once ready, a download link appears here and in your <strong>notification bell</strong>. No need to stay on this page.</span>
+            </div>
+            <!-- Toast notification -->
+            <div class="sim-toast">
+              <div class="sim-toast-title">📄 Report ready</div>
+              <div class="sim-toast-body">June 2026 compliance PDF is ready to download.</div>
+            </div>
+          </div>
+
+          <!-- ── Page 4: Settings (Admin) ── -->
+          <div class="sim-page" id="page-4">
+            <div class="sim-topbar">
+              <span class="sim-page-title">Settings</span>
+            </div>
+            <!-- Admin banner -->
+            <div class="sim-admin-banner">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--sim-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Admin — you have access to all configuration sections.
+            </div>
+            <div class="sim-settings-2col">
+              <!-- Vault Connection -->
+              <div class="sim-card">
+                <div class="sim-section-lbl">Vault Connection</div>
+                <div class="sim-vault-status">
+                  <div class="sim-sdot green"></div>
+                  <div><div class="sim-vault-name">Connected</div><div class="sim-vault-sub">Synced 4m ago · 1,847 cases</div></div>
+                </div>
+                <span class="sim-vault-url">scpharma-sb.veevavault.com</span>
+                <table class="sim-sync-tbl">
+                  <thead><tr><th>Field</th><th>Value</th></tr></thead>
+                  <tbody>
+                    <tr><td>Last sync</td><td>4m ago</td></tr>
+                    <tr><td>Records</td><td>1,847</td></tr>
+                    <tr><td>Type</td><td>incremental</td></tr>
+                  </tbody>
+                </table>
+                <div style="display:flex;gap:5px"><span class="sim-btn-sm sim-btn-accent" style="font-size:9px">Sync now</span><span class="sim-btn-sm" style="font-size:9px">View logs</span></div>
+              </div>
+              <!-- Integrations / Webhooks -->
+              <div class="sim-card">
+                <div class="sim-section-lbl">Integrations</div>
+                <div class="sim-wh-row">
+                  <!-- Slack 4-color logo -->
+                  <svg class="sim-wh-icon" viewBox="0 0 122.8 122.8"><path d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9z" fill="#E01E5A"/><path d="M32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z" fill="#E01E5A"/><path d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2z" fill="#36C5F0"/><path d="M45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/><path d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2z" fill="#2EB67D"/><path d="M90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/><path d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9z" fill="#ECB22E"/><path d="M77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z" fill="#ECB22E"/></svg>
+                  <div class="sim-wh-info"><div class="sim-wh-name">Slack</div><div class="sim-wh-url">••••••••hooks.slack.com/…a3fk</div></div>
+                  <span class="sim-badge success">Active</span>
+                </div>
+                <div class="sim-wh-row">
+                  <!-- Teams logo -->
+                  <svg class="sim-wh-icon" viewBox="0 0 2228 2073"><path d="M1554.6 777.5h575.7c54.4 0 98.5 44.1 98.5 98.5v524.4c0 199.9-162.1 362-362 362h-1.7c-199.9 0-362-162.1-362-362V829c0-28.4 23-51.4 51.5-51.4z" fill="#5059C9"/><circle cx="1943.8" cy="467" r="218.7" fill="#5059C9"/><circle cx="1218.8" cy="411.5" r="274.1" fill="#7B83EB"/><path d="M1651.5 777.5H755.2a98.5 98.5 0 0 0-98.5 98.5v600.2c0 362.1 293.6 655.7 655.7 655.7 362.1 0 655.7-293.6 655.7-655.7V876c0-54.4-44.1-98.5-98.6-98.5z" fill="#7B83EB"/><path d="M1133.3 1090.7H900v713.3H713.3v-713.3H480V920h653.3v170.7z" fill="#fff"/></svg>
+                  <div class="sim-wh-info"><div class="sim-wh-name">Microsoft Teams</div><div class="sim-wh-url" style="color:var(--sim-danger)">Not configured</div></div>
+                  <span class="sim-btn-sm" style="font-size:8px;padding:3px 8px">Connect</span>
+                </div>
+              </div>
+              <!-- SLA Configuration -->
+              <div class="sim-card">
+                <div class="sim-section-lbl">SLA Configuration</div>
+                <div class="sim-sla-cfg-row"><span class="sim-sla-priority">Critical priority</span><span class="sim-sla-hrs">24h</span></div>
+                <div class="sim-sla-cfg-row"><span class="sim-sla-priority">Urgent priority</span><span class="sim-sla-hrs">48h</span></div>
+                <div class="sim-sla-cfg-row"><span class="sim-sla-priority">Standard priority</span><span class="sim-sla-hrs">72h</span></div>
+                <div class="sim-sla-cfg-row"><span class="sim-sla-priority">Off-label (auto-upgrade)</span><span class="sim-sla-hrs" style="color:var(--sim-warning)">48h</span></div>
+              </div>
+              <!-- User Management -->
+              <div class="sim-card">
+                <div class="sim-section-lbl">User Management</div>
+                <div class="sim-usr-row">
+                  <div class="sim-usr-av" style="background:color-mix(in srgb,var(--sim-accent) 18%,transparent);color:var(--sim-accent)">KL</div>
+                  <div><div class="sim-usr-name">Katie Luepke</div><div class="sim-usr-email">k.luepke@scpharma.com</div></div>
+                  <span class="sim-role admin">Admin</span>
+                </div>
+                <div class="sim-usr-row">
+                  <div class="sim-usr-av" style="background:color-mix(in srgb,var(--sim-success) 18%,transparent);color:var(--sim-success)">AR</div>
+                  <div><div class="sim-usr-name">Allie Reynolds</div><div class="sim-usr-email">a.reynolds@scpharma.com</div></div>
+                  <span class="sim-role viewer">Viewer</span>
+                </div>
+                <div class="sim-usr-row">
+                  <div class="sim-usr-av" style="background:color-mix(in srgb,var(--sim-warning) 18%,transparent);color:var(--sim-warning)">JS</div>
+                  <div><div class="sim-usr-name">James Shea</div><div class="sim-usr-email">j.shea@scpharma.com</div></div>
+                  <span class="sim-role viewer">Viewer</span>
+                </div>
+                <div style="margin-top:8px"><span class="sim-btn-sm sim-btn-accent" style="font-size:9px">+ Invite user</span></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /sim-main -->
+      </div><!-- /sim-body -->
+    </div><!-- /sim-wrap -->
+
+    <!-- Route indicator pills -->
+    <div class="sim-route-pills">
+      <div class="sim-route-pill active" style="width:32px" onclick="goTo(0)" title="Overview"></div>
+      <div class="sim-route-pill" style="width:32px" onclick="goTo(1)" title="SLA Monitor"></div>
+      <div class="sim-route-pill" style="width:32px" onclick="goTo(2)" title="Cases"></div>
+      <div class="sim-route-pill" style="width:32px" onclick="goTo(3)" title="Reports"></div>
+      <div class="sim-route-pill" style="width:32px" onclick="goTo(4)" title="Settings"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Pain -->
+<section class="pain-section">
+  <div class="container">
+    <div class="section-label">The problem</div>
+    <h2 class="section-h2">Veeva manages your cases.<br>But who's watching the clock?</h2>
+    <p class="section-sub">Your team works hard. The data is all in Vault. But without an intelligence layer on top, you're flying blind until someone builds a spreadsheet — or a deadline slips.</p>
+    <div class="pain-grid">
+      <div class="pain-cell">
+        <div class="pain-num">01</div>
+        <div class="pain-icon danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <p class="pain-h3">SLA breaches discovered after the fact, not before</p>
+        <p class="pain-body">Cases slip past the 48-hour mark while your team is handling other work. You find out in the monthly export — not with a real-time alert 6 hours before it's too late to act.</p>
+      </div>
+      <div class="pain-cell">
+        <div class="pain-num">02</div>
+        <div class="pain-icon warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/><line x1="7" y1="13" x2="11" y2="13"/><line x1="7" y1="17" x2="9" y2="17"/></svg>
+        </div>
+        <p class="pain-h3">Manual reporting takes days that should go to science</p>
+        <p class="pain-body">Someone on your team exports from Vault, cleans in Excel, and builds slides — every single month. That's a medical professional doing data entry instead of supporting HCPs or reviewing content.</p>
+      </div>
+      <div class="pain-cell">
+        <div class="pain-num">03</div>
+        <div class="pain-icon info">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        </div>
+        <p class="pain-h3">HCP trend signals are invisible to Medical Affairs strategy</p>
+        <p class="pain-body">Which topics are spiking this quarter? Which products drive the most off-label questions? Your Vault holds the answers — but there's no dashboard showing them to the people who need to act on them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="features-intro">
+      <div class="section-label">What Inqura does</div>
+      <h2 class="section-h2">Two modules. Everything your Medical Affairs head needs every morning.</h2>
+      <p class="section-sub">Inqura reads directly from your existing Veeva Vault MedInquiry via the official API. No migration, no duplicate entry, no retraining your team.</p>
+    </div>
+    <div class="module-block">
+      <div class="module-card">
+        <span class="module-label">M1</span>
+        <h3 class="module-h3">Inquiry Intelligence Dashboard</h3>
+        <p class="module-body">The view your CMO is about to ask for — already built, updated every hour from your Vault data.</p>
+        <ul class="feature-list">
+          <li>Monthly inquiry volume trend — 12-month bar chart</li>
+          <li>Topic breakdown — top 7 topics sorted by volume</li>
+          <li>Channel split: CRM field / email / phone / web</li>
+          <li>HCP specialty patterns — privacy-safe, no names stored</li>
+          <li>Per-product inquiry split — up to 8 products by volume</li>
+          <li>Live case queue — 20 most recent, with SLA status per row</li>
+        </ul>
+      </div>
+      <div class="module-card">
+        <span class="module-label">M2</span>
+        <h3 class="module-h3">SLA &amp; Compliance Monitor</h3>
+        <p class="module-body">Live countdown timers for every open case. Breach prevented, not discovered.</p>
+        <ul class="feature-list">
+          <li>Real-time SLA countdown per case — updates every minute</li>
+          <li>Breach risk queue sorted by urgency</li>
+          <li>One-click escalation to Slack or Microsoft Teams</li>
+          <li>Per-product SLA compliance % with period-over-period trend</li>
+          <li>30-day compliance trend chart with 95% reference line</li>
+          <li>On-demand compliance PDF — one-click generation, audit-ready</li>
+        </ul>
+      </div>
+    </div>
+    <div class="module-block">
+      <div class="module-card wide">
+        <div>
+          <span class="module-label">Compliance · PDF</span>
+          <h3 class="module-h3">Monthly reports that write themselves</h3>
+          <p class="module-body">Click Generate — Inqura builds a board-ready SLA compliance PDF from your Vault data in the background. A download link appears in the Reports page and your notification bell when it's ready. No assembly required.</p>
+          <ul class="feature-list">
+            <li>Executive summary: overall %, total cases, fulfilled, breached</li>
+            <li>Per-product breakdown table with colour-coded compliance</li>
+            <li>30-day compliance trend chart + breach log</li>
+            <li>21 CFR Part 11-aware audit trail — every export logged</li>
+          </ul>
+        </div>
+        <div>
+          <div class="compliance-preview">
+            <div style="font-size:11px;font-weight:700;color:var(--text-4);letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px">June 2026 · SLA Compliance by Product</div>
+            <div class="compliance-row"><span class="compliance-product">Cardizem XR</span><div class="pct-bar-wrap"><div class="pct-bar"><div class="pct-bar-fill" style="width:98%"></div></div><span class="compliance-pct" style="color:var(--success-text)">98.1%</span></div></div>
+            <div class="compliance-row"><span class="compliance-product">Nexavar 200</span><div class="pct-bar-wrap"><div class="pct-bar"><div class="pct-bar-fill" style="width:95%"></div></div><span class="compliance-pct" style="color:var(--accent)">95.3%</span></div></div>
+            <div class="compliance-row"><span class="compliance-product">Ibrutix</span><div class="pct-bar-wrap"><div class="pct-bar"><div class="pct-bar-fill warn" style="width:88%"></div></div><span class="compliance-pct" style="color:var(--warning-text)">88.4%</span></div></div>
+            <div class="compliance-row"><span class="compliance-product">Venapro-R</span><div class="pct-bar-wrap"><div class="pct-bar"><div class="pct-bar-fill" style="width:100%"></div></div><span class="compliance-pct" style="color:var(--success-text)">100%</span></div></div>
+            <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:var(--text-4)">Overall compliance</span><span style="font-size:16px;font-weight:700;color:var(--success-text);font-family:'JetBrains Mono',monospace">95.4%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="hiw-section" id="how-it-works">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-label">Setup</div>
+      <h2 class="section-h2">Live in under a day. No Vault changes.</h2>
+      <p class="section-sub centered">We connect to your sandbox Vault in your first session and show you a live dashboard before the call ends.</p>
+    </div>
+    <div class="steps-row">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3 class="step-h3">Connect your Vault</h3>
+        <p class="step-body">We configure a read-only Veeva integration account in your existing Vault. No schema changes, no new objects, no disruption to your Medical Information team's day-to-day.</p>
+        <div class="step-detail">→ POST /api/v24.1/auth · session established</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3 class="step-h3">First sync — your data, live</h3>
+        <p class="step-body">Inqura pulls case metadata from your MedInquiry VQL. No case text, no HCP names — privacy-safe by architecture. Your dashboard appears within minutes of first sync.</p>
+        <div class="step-detail">→ Synced 1,847 cases · 0 PHI stored</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3 class="step-h3">Auto-sync every hour</h3>
+        <p class="step-body">Automated sync keeps your dashboard current. Set your Slack or Teams webhook once — your team gets breach-risk alerts when a case enters the 20-hour warning window, and a critical alert inside 6 hours.</p>
+        <div class="step-detail">→ Next sync in 42m · 7 alerts active</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Voices -->
+<section class="voices-section" id="voices">
+  <div class="container">
+    <div class="section-label">Scenarios we hear every week</div>
+    <h2 class="section-h2">Your team already has Vault.<br>These problems persist anyway.</h2>
+    <p class="section-sub">Inqura exists because having a world-class case management system doesn't automatically give you the analytics layer on top of it. Here's what that gap looks like in practice.</p>
+    <div class="voices-grid">
+      <div class="voice-card featured">
+        <div class="voice-source">
+          <div class="voice-avatar maps" style="background:var(--warning-bg);border:1px solid var(--warning-border);display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--warning-text)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+              <line x1="12" y1="2" x2="12" y2="4"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            </svg>
+          </div>
+          <div><div class="voice-platform" style="color:var(--warning-text)">SLA Management</div><div class="voice-author">Medical Information Director, Mid-Size Biotech</div></div>
+        </div>
+        <div class="voice-body-wrap">
+          <p class="voice-quote">"We have a 48-hour SLA in our SOPs. But the only way we know a case is approaching breach is <strong>when someone manually pulls the Vault export and checks the timestamps in Excel</strong>. By the time we see it, we've got 2 hours left — or we've already missed it. We're reactive when we should be proactive."</p>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><span class="voice-tag danger">SLA breach discovered after the fact</span><span class="voice-tag warning">No early warning system</span></div>
+        </div>
+      </div>
+      <div class="voice-card">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--warning-bg);border:1px solid var(--warning-border);display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--warning-text)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+          </svg>
+        </div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-4);margin-bottom:6px">Reporting Overhead · Large Pharma</div>
+        <p class="voice-quote">"Every QBR, someone on my team spends a full day exporting from Vault, cleaning in Excel, and building slides. <strong>That's a medical professional doing data entry.</strong> Leadership gets the numbers 3 days late and I spend the next week answering follow-up questions about methodology."</p>
+        <span class="voice-tag warning">Manual reporting taxes clinical headcount</span>
+      </div>
+      <div class="voice-card">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--accent-tint);border:1px solid var(--accent-border);display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+          </svg>
+        </div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-4);margin-bottom:6px">Strategic Insight Gap · Specialty Pharma</div>
+        <p class="voice-quote">"Our CMO asked which HCP specialties are driving off-label questions on our new launch. <strong>I had to come back two days later with an answer</strong> — and even then I wasn't confident in it because I'd built the pivot table myself. That question should take 30 seconds, not 2 days."</p>
+        <span class="voice-tag info">Trend analysis takes days instead of seconds</span>
+      </div>
+      <div class="voice-card">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--danger-bg);border:1px solid var(--danger-border);display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--danger-text)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            <line x1="12" y1="2" x2="12" y2="4"/>
+          </svg>
+        </div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-4);margin-bottom:6px">Alert Fatigue · Global Pharma</div>
+        <p class="voice-quote">"We have Vault. We have the data. But <strong>there's no layer that watches the data for us</strong>. No one gets notified when a product starts getting 40% more inquiries than usual. No one gets a ping when a critical case is 6 hours from breach. We're waiting for the weekly report to tell us what happened last week."</p>
+        <span class="voice-tag danger" style="color:var(--success-text);background:var(--success-bg);border-color:var(--success-border)">Inqura adds the intelligence layer on top</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-4);margin-top:20px">Composite scenarios drawn from discovery conversations with Medical Affairs and Medical Information teams at pharma companies running Veeva Vault MedInquiry.</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="demo">
+  <div class="container">
+    <div class="cta-inner">
+      <h2 class="cta-h2">See Inqura with your Vault data.</h2>
+      <p class="cta-sub">We'll connect to your sandbox Vault and show you a live dashboard in the first session. No migration, no commitment, no disruption to your team.</p>
+      <div class="cta-actions">
+        <button class="btn-cta-primary" onclick="openModal()">Book a 30-min demo →</button>
+        <a href="mailto:info@virsaisolutions.com" class="btn-cta-sec">Email us instead</a>
+      </div>
+      <p class="cta-trust">No credit card · No Vault modifications · Connects in &lt;1 day</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span class="footer-copy">© 2026 VirsAI Solutions · Inqura. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="https://virsaisolutions.com" target="_blank" rel="noopener">VirsAI Solutions</a>
+        <a href="mailto:info@virsaisolutions.com">info@virsaisolutions.com</a>
+        <a href="/dashboard/login">Log in</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Modal -->
+<div class="modal-overlay" id="demoModal" onclick="handleOverlayClick(event)">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+    <div id="modalForm">
+      <h2 class="modal-h2" id="modalTitle">Book your demo</h2>
+      <p class="modal-sub">We'll reach out within one business day to schedule a 30-minute session with your Vault data.</p>
+      <form id="demoForm" action="https://formspree.io/f/xwvjgeyr" method="POST" onsubmit="handleSubmit(event)">
+        <div class="form-row"><label for="name">Full name</label><input type="text" id="name" name="name" placeholder="Dr. Sarah Chen" required /></div>
+        <div class="form-row"><label for="email">Work email</label><input type="email" id="email" name="email" placeholder="sarah.chen@pharma.com" required /></div>
+        <div class="form-row"><label for="company">Company</label><input type="text" id="company" name="company" placeholder="Arcturus Pharma Inc." required /></div>
+        <div class="form-row"><label for="team">Medical Affairs team size</label>
+          <select id="team" name="team_size">
+            <option value="">Select team size</option>
+            <option>1–5 people</option><option>6–15 people</option><option>16–30 people</option><option>30+ people</option>
+          </select>
+        </div>
+        <input type="hidden" name="_subject" value="New Inqura demo request" />
+        <button type="submit" class="form-submit" id="submitBtn">Request a demo →</button>
+      </form>
+    </div>
+    <div class="form-success" id="formSuccess">
+      <div class="form-success-icon">✅</div>
+      <h3>You're on the list.</h3>
+      <p>We'll reach out to <span id="successEmail"></span> within one business day.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Theme ──
+function toggleTheme() {
+  const h = document.documentElement;
+  h.setAttribute('data-theme', h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  localStorage.setItem('iq-theme', h.getAttribute('data-theme'));
+}
+(function(){ const s = localStorage.getItem('iq-theme'); if (s) document.documentElement.setAttribute('data-theme', s); })();
+
+// ── Modal ──
+function openModal() { document.getElementById('demoModal').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal() { document.getElementById('demoModal').classList.remove('open'); document.body.style.overflow=''; }
+function handleOverlayClick(e) { if (e.target===document.getElementById('demoModal')) closeModal(); }
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('demoForm');
+  const btn = document.getElementById('submitBtn');
+  const emailVal = document.getElementById('email').value;
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const r = await fetch('https://formspree.io/f/xwvjgeyr', { method:'POST', body: new FormData(form), headers:{ Accept:'application/json' } });
+    if (r.ok) {
+      document.getElementById('successEmail').textContent = emailVal;
+      document.getElementById('modalForm').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    } else { btn.disabled=false; btn.textContent='Try again →'; }
+  } catch { btn.disabled=false; btn.textContent='Try again →'; }
+}
+
+// ── Simulation router ──
+const ROUTES = [
+  { url: 'inqura.virsaisolutions.com/dashboard',          label: 'Overview' },
+  { url: 'inqura.virsaisolutions.com/dashboard/sla',      label: 'SLA Monitor' },
+  { url: 'inqura.virsaisolutions.com/dashboard/cases',    label: 'Cases' },
+  { url: 'inqura.virsaisolutions.com/dashboard/reports',  label: 'Reports' },
+  { url: 'inqura.virsaisolutions.com/dashboard/settings', label: 'Settings (Admin)' },
+];
+const DWELL = 7000;
+let current = 0, autoTimer;
+
+function goTo(idx) {
+  clearTimeout(autoTimer);
+
+  document.getElementById('page-' + current).classList.remove('active');
+  document.querySelectorAll('.sim-nav-item')[current].classList.remove('active');
+  document.querySelectorAll('.sim-route-pill')[current].classList.remove('active');
+
+  current = idx;
+
+  const page = document.getElementById('page-' + current);
+  page.classList.add('active');
+  // Scroll to top on new page
+  page.scrollTop = 0;
+  document.querySelectorAll('.sim-nav-item')[current].classList.add('active');
+  document.querySelectorAll('.sim-route-pill')[current].classList.add('active');
+  document.getElementById('simUrl').textContent = ROUTES[current].url;
+
+  onEnterPage(current);
+  startProgress();
+  autoTimer = setTimeout(() => goTo((current + 1) % ROUTES.length), DWELL);
+}
+
+function startProgress() {
+  const bar = document.getElementById('simProgress');
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  bar.offsetWidth; // force reflow
+  bar.style.transition = `width ${DWELL}ms linear`;
+  bar.style.width = '100%';
+}
+
+function onEnterPage(idx) {
+  if (idx === 0) {
+    // Animate KPI ring (96.4% = dashoffset = 56.5*(1-0.964) = 2.03)
+    const ring = document.getElementById('kpiRing');
+    if (ring) {
+      ring.style.strokeDashoffset = '56.5';
+      setTimeout(() => { ring.style.strokeDashoffset = '2.03'; }, 80);
+    }
+  }
+  if (idx === 1) {
+    // Animate product SLA bars
+    document.querySelectorAll('.sim-pct-fill2').forEach(el => {
+      const pct = el.getAttribute('data-pct');
+      el.style.width = '0';
+      setTimeout(() => { el.style.width = pct + '%'; }, 80);
+    });
+  }
+}
+
+// ── Live timers ──
+let t1h = 3, t1m = 12, t2h = 14, t2m = 30;
+function tickTimers() {
+  function dec(h, m) { return m > 0 ? [h, m-1] : h > 0 ? [h-1, 59] : [0, 0]; }
+  [t1h, t1m] = dec(t1h, t1m);
+  [t2h, t2m] = dec(t2h, t2m);
+  const fmt = (h, m) => `${h}h ${String(m).padStart(2,'0')}m`;
+  document.querySelectorAll('#t1,#t1b').forEach(el => el.textContent = fmt(t1h, t1m));
+  document.querySelectorAll('#t2,#t2b').forEach(el => el.textContent = fmt(t2h, t2m));
+}
+setInterval(tickTimers, 60000);
+
+// ── Boot ──
+goTo(0);
+</script>
+</body>
+</html>
