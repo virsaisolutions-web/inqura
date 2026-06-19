@@ -328,7 +328,27 @@
       .sim-bars { height: 52px; }
       .sim-trend-svg { height: 70px; }
       .sim-period-seg { flex-wrap: nowrap; overflow-x: auto; }
+      /* ── No horizontal scroll on mobile ── */
+      .sim-wrap { overflow: hidden; }
+      .sim-main { overflow: hidden; }
+      .sim-page { overflow-x: hidden; overflow-y: auto; }
+      /* Table cells can wrap and shrink */
+      .sim-table th, .sim-table td { white-space: normal; word-break: break-word; padding: 5px 5px; }
+      /* Topic label narrower */
+      .sim-topic-lbl { width: 80px; }
+      /* Hide Sync now button on mobile to free topbar space */
+      .sim-btn-sm { display: none; }
+      /* Topbar: stack title and sync badge vertically */
+      .sim-topbar { flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 8px; }
+      /* Risk rows: allow escalate to shrink */
+      .sim-risk-row { flex-wrap: wrap; gap: 6px; }
+      .sim-escalate { flex-shrink: 1; }
+      /* Breach table compact */
+      .sim-breach-table th, .sim-breach-table td { padding: 4px 4px; font-size: 9px; }
+      /* Prod table compact */
+      .sim-prod-table th, .sim-prod-table td { padding: 5px 4px; }
     }
+
 
     @keyframes spulse { 0%,100%{opacity:1} 50%{opacity:.4} }
     @keyframes ttick { 50%{opacity:.6} }
